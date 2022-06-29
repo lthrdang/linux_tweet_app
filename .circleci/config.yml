@@ -21,10 +21,13 @@ jobs:
       CONTAINER_REGISTRY_URI: 969220108910.dkr.ecr.us-east-1.amazonaws.com
     steps:
       - checkout
+      - setup_remote_docker:
+          version: 20.10.14
+          docker_layer_caching: true
       - run:
           name: Install dependencies
           command: |
-            apk add --no-cache aws-cli docker
+            apk add --no-cache aws-cli docker-cli
       - run:
           name: Login ECR
           command: aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${CONTAINER_REGISTRY_URI}
