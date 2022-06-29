@@ -56,10 +56,6 @@ jobs:
           apk add --no-cache aws-cli curl
           curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
           install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
-          kubectl version
-    - run:
-        name: Install dependencies
-        command: apt update && apt install awscli
     - run: aws eks update-kubeconfig --region us-east-1 --name LinuxTweetCluster
     - run: kubectl apply -f manifests/
 
