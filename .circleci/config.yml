@@ -16,7 +16,7 @@ jobs:
         command: make lint
   build:
     docker:
-    - image: amazon/aws-cli
+    - image: cimg/aws:2022.6.1
     environment:
       CONTAINER_REGISTRY_URI: 969220108910.dkr.ecr.us-east-1.amazonaws.com
     steps:
