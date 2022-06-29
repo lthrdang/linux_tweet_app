@@ -46,7 +46,7 @@ jobs:
           docker push $CONTAINER_REGISTRY_URI/linux-tweet-app:${CIRCLE_SHA1}
   deploy:
     docker:
-    - image: 1.24-debian-11
+    - image: bitnami/kubectl:1.24-debian-11
     steps:
     - checkout
     - run:
