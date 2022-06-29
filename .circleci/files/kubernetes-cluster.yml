@@ -1,0 +1,50 @@
+Description: >
+  Linux Tweet K8s cluster stack.
+
+Parameters: {}
+
+Resources:
+  LinuxTweetCluster:
+    Type: AWS::EKS::Cluster
+    Properties:
+      Name: LinuxTweetCluster
+      Version: "1.22"
+      RoleArn: arn:aws:iam::969220108910:role/myEKSClusterRole
+      ResourcesVpcConfig:
+        SecurityGroupIds:
+          - sg-099b5fd83b7944ab6
+        SubnetIds:
+          - subnet-0ccf22e40c5435e89
+          - subnet-08387d15f8f8259f0
+          - subnet-0b52cb158fb41426e
+          - subnet-006c9c1012b087341
+          - subnet-0808d1319731e88fc
+      Logging: 
+        ClusterLogging:
+          EnabledTypes:
+            - Type: api
+            - Type: audit
+      Tags: 
+        - Key: "Name"
+          Value: "LinuxTweetCluster"
+
+  LinuxTweetNodegroup:
+    Type: 'AWS::EKS::Nodegroup'
+    DependsOn: LinuxTweetCluster
+    Properties:
+      ClusterName: LinuxTweetCluster
+      NodeRole: 'arn:aws:iam::969220108910:role/myEKSWorkerNodeRole'
+      InstanceTypes:
+        - t3.medium
+      ScalingConfig:
+        MinSize: 2
+        DesiredSize: 2
+        MaxSize: 2
+      Labels:
+        Name: LinuxTweetNodeGroup
+      Subnets:
+        - subnet-0ccf22e40c5435e89
+        - subnet-08387d15f8f8259f0
+        - subnet-0b52cb158fb41426e
+        - subnet-006c9c1012b087341
+        - subnet-0808d1319731e88fc
