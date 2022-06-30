@@ -55,14 +55,16 @@ jobs:
         name: Install dependencies
         command: |
           apt update
-          apt install -y curl zip
+          apt install -y curl zip gettext-base
           curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
           unzip awscliv2.zip
           ./aws/install
           curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
           install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
     - run: aws eks update-kubeconfig --region us-east-1 --name LinuxTweetCluster
-    - run: kubectl apply -f .circleci/manifests/
+    - run: IMAGE_TAG=${CIRCLE_SHA1} envsubst < .circleci/manifests/deployment.yml.tpl > .circleci/manifests/deployment.yml
+    - run: kubectl apply -f .circleci/manifests/deployment.yml
+    - run: kubectl rollout status deployment/linux-tweet-app --timeout=5m
 
 workflows:
   version: 2
