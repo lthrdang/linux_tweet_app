@@ -46,17 +46,6 @@ jobs:
         command: |
           docker push $CONTAINER_REGISTRY_URI/linux-tweet-app:latest
           docker push $CONTAINER_REGISTRY_URI/linux-tweet-app:${CIRCLE_SHA1}
-  provision-infra:
-    docker:
-    - image: amazon/aws-cli
-    steps:
-      - checkout
-      - run:
-          name: Provision Kubernetes Cluster
-          command: |
-            aws cloudformation deploy \
-              --template-file .circleci/files/kubernetes-cluster.yml \
-              --stack-name LinuxTweet
   deploy:
     docker:
     - image: ubuntu:20.04
@@ -87,17 +76,10 @@ workflows:
               - master
         requires:
           - "linting"
-    - provision-infra:
-        filters:
-          branches:
-            only:
-              - master
-        requires:
-          - "build"
     - deploy:
         filters:
           branches:
             only:
               - master
         requires:
-          - "provision-infra"
+          - "build"
