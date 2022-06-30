@@ -30,7 +30,9 @@ jobs:
           apk add --no-cache aws-cli docker-cli
     - run:
         name: Login ECR
-        command: aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${CONTAINER_REGISTRY_URI}
+        command: |
+          aws ecr get-login-password \
+            --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${CONTAINER_REGISTRY_URI}
     - run:
         name: Build docker image
         command: docker build -t linux-tweet-app:latest .
@@ -44,6 +46,17 @@ jobs:
         command: |
           docker push $CONTAINER_REGISTRY_URI/linux-tweet-app:latest
           docker push $CONTAINER_REGISTRY_URI/linux-tweet-app:${CIRCLE_SHA1}
+  provision-infra:
+    docker:
+    - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: Provision Kubernetes Cluster
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/kubernetes-cluster.yml \
+              --stack-name LinuxTweet
   deploy:
     docker:
     - image: ubuntu:20.04
@@ -74,10 +87,17 @@ workflows:
               - master
         requires:
           - "linting"
-    - deploy:
+    - provision-infra:
         filters:
           branches:
             only:
               - master
         requires:
           - "build"
+    - deploy:
+        filters:
+          branches:
+            only:
+              - master
+        requires:
+          - "provision-infra"
