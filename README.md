@@ -2,12 +2,27 @@
 
 This is very simple NGINX website that allows a user to send a tweet. 
 
-It's mostly used as a sample application for Docker 101 workshops. 
+This project using EKS cluster to deploy website automatically by CircleCI.
 
-To use it:
+## Deploy Cluster
 
-Build it:
-`docker build -t linux_tweet_app .`
+EKS cluster is provisioned by CloudFormation was defined in `.circleci/files`.
 
-Run it:
-`docker container run --detach -p 80:80 linux_tweet_app`
+### Prerequisites
+- AWS account with default VPC and subnets.
+- aws-cli installed on you machine.
+- aws-cli is authentiated with AWS admin user.
+- IAM role for the cluster with policy `AmazonEKSClusterPolicy` added.
+- IAM role for the worker nodes with poicy `AmazonEKSWorkerNodePolicy`, `AmazonEC2ContainerRegistryReadOnly`, `AmazonEKS_CNI_Policy` added.
+
+### Create EKS cluster
+
+```bash
+aws cloudformation deploy --stack-name LinuxTweet --template-file .circleci/files/kubernetes-cluster.yml
+```
+
+### Remember destroy cluster when you don't need anymore
+
+```bash
+aws cloudformation delete-stack --stack-name LinuxTweet
+```
