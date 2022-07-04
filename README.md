@@ -26,3 +26,7 @@ aws cloudformation deploy --stack-name LinuxTweet --template-file .circleci/file
 ```bash
 aws cloudformation delete-stack --stack-name LinuxTweet
 ```
+
+### Important
+
+Remember to make sure that EC2 Load Balancers were removed when EKS cluster was destroyed to avoid extra bills.
