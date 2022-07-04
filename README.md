@@ -6,7 +6,7 @@ This project using EKS cluster to deploy website automatically by CircleCI.
 
 ## Deploy Cluster
 
-EKS cluster is provisioned by CloudFormation was defined in `.circleci/files`.
+EKS cluster is provisioned by CloudFormation was defined in `.circleci/files/kubernetes-cluster.yml`.
 
 ### Prerequisites
 - AWS account with default VPC and subnets.
